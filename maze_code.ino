@@ -2,8 +2,8 @@
 
 Servo servo1;
 Servo servo2;
-int joyX = 0; // pin ca joystick-ul sa se poata misca pe axa x
-int joyY = 1; // pin ca joystick-ul sa se poata misca pe axa y
+int joyX = 0; 
+int joyY = 1; 
 
 int servoVal;
 unsigned long previousMillis = 0; 
@@ -18,7 +18,6 @@ void setup()
 
 void loop()
 {
-  //maparea valorilor pe care le citesc de la controalele joystick-ului
   servoVal = analogRead(joyX);
   int servo1Pos = map(servoVal, 0, 1023, 180, 130);
   servo1.write(servo1Pos);
@@ -27,7 +26,23 @@ void loop()
   int servo2Pos = map(servoVal, 0, 1023, 130, 180);
   servo2.write(servo2Pos);
 
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval)
+  {
+    previousMillis = currentMillis; 
 
+    Serial.print("Joystick X: ");
+    Serial.print(analogRead(joyX));
+    Serial.print(" -> Servo1 Position: ");
+    Serial.println(servo1Pos);
+
+    Serial.print("Joystick Y: ");
+    Serial.print(analogRead(joyY));
+    Serial.print(" -> Servo2 Position: ");
+    Serial.println(servo2Pos);
+  }
+
+  delay(50); 
 }
 
 
