@@ -1,48 +1,29 @@
-#include <Servo.h>
+const int X_PIN = A0;
+const int Y_PIN = A1;
 
-Servo servo1;
-Servo servo2;
-int joyX = 0; 
-int joyY = 1; 
+const int DEAD = 120;   
+const int MID  = 512;
 
-int servoVal;
-unsigned long previousMillis = 0; 
-const long interval = 500;        
+char lastCmd = 'S';
 
-void setup()
-{
-  Serial.begin(9600); 
-  servo1.attach(3);    
-  servo2.attach(5);    
+void setup() {
+  Serial.begin(115200);
 }
 
-void loop()
-{
-  servoVal = analogRead(joyX);
-  int servo1Pos = map(servoVal, 0, 1023, 180, 130);
-  servo1.write(servo1Pos);
+void loop() {
+  int x = analogRead(X_PIN) - MID;
+  int y = analogRead(Y_PIN) - MID;
 
-  servoVal = analogRead(joyY);
-  int servo2Pos = map(servoVal, 0, 1023, 130, 180);
-  servo2.write(servo2Pos);
+  char cmd = 'S';
+  if (x > DEAD) cmd = 'R';
+  else if (x < -DEAD) cmd = 'L';
+  else if (y > DEAD) cmd = 'D';
+  else if (y < -DEAD) cmd = 'U';
 
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval)
-  {
-    previousMillis = currentMillis; 
-
-    Serial.print("Joystick X: ");
-    Serial.print(analogRead(joyX));
-    Serial.print(" -> Servo1 Position: ");
-    Serial.println(servo1Pos);
-
-    Serial.print("Joystick Y: ");
-    Serial.print(analogRead(joyY));
-    Serial.print(" -> Servo2 Position: ");
-    Serial.println(servo2Pos);
+  if (cmd != lastCmd) {
+    Serial.write(cmd);
+    lastCmd = cmd;
   }
 
-  delay(50); 
+  delay(10);
 }
-
-
