@@ -82,3 +82,16 @@ class KeyboardAgent2(KeyboardAgent):
         if   (self.NORTH_KEY in self.keys) and Directions.NORTH in legal:   move = Directions.NORTH
         if   (self.SOUTH_KEY in self.keys) and Directions.SOUTH in legal: move = Directions.SOUTH
         return move
+
+import threading
+import time
+
+try:
+    import serial
+except ImportError:
+    serial = None
+
+from game import Directions
+from game import Agent
+
+
